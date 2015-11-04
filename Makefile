@@ -1,63 +1,34 @@
-ifdef VERBOSE
-    Q =
-    E = @true 
-else
-    Q = @
-    E = @echo 
-endif
+IDIR =./include
+CC=gcc
+CXX=g++
+FLAGS= COMMONFLAGS = -Wall -Wextra -pedantic
 
-CFILES := $(shell find src -mindepth 1 -maxdepth 4 -name "*.c")
-CXXFILES := $(shell find src -mindepth 1 -maxdepth 4 -name "*.cpp")
-
-INFILES := $(CFILES) $(CXXFILES)
-
-OBJFILES := $(CXXFILES:src/%.cpp=%) $(CFILES:src/%.c=%)
-DEPFILES := $(CXXFILES:src/%.cpp=%) $(CFILES:src/%.c=%)
-OFILES := $(OBJFILES:%=obj/%.o)
-
-BINFILE = projectname
-
-COMMONFLAGS = -Wall -Wextra -pedantic
-LDFLAGS =
+ODIR=./obj
+LDIR=./lib
+SDIR=./src
+LIBS=
 
 ifdef DEBUG
     COMMONFLAGS := $(COMMONFLAGS) -g
 endif
-CFLAGS = $(COMMONFLAGS) --std=c99
-CXXFLAGS = $(COMMONFLAGS) --std=c++0x
-DEPDIR = deps
-all: $(BINFILE)
-ifeq ($(MAKECMDGOALS),)
--include Makefile.dep
-endif
-ifneq ($(filter-out clean, $(MAKECMDGOALS)),)
--include Makefile.dep
-endif
 
-CC = gcc
-CXX = g++
+BINFILE = analyse
 
+_DEPS = task.h
+DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
--include Makefile.local
+_OBJ = task.o main.o
+OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-.PHONY: clean all depend
-.SUFFIXES:
-obj/%.o: src/%.c
-    $(E)C-compiling $<
-    $(Q)if [ ! -d `dirname $@` ]; then mkdir -p `dirname $@`; fi
-    $(Q)$(CC) -o $@ -c $< $(CFLAGS)
-obj/%.o: src/%.cpp
-    $(E)C++-compiling $<
-    $(Q)if [ ! -d `dirname $@` ]; then mkdir -p `dirname $@`; fi
-    $(Q)$(CXX) -o $@ -c $< $(CXXFLAGS)
-Makefile.dep: $(CFILES) $(CXXFILES)
-    $(E)Depend
-    $(Q)for i in $(^); do $(CXX) $(CXXFLAGS) -MM "$${i}" -MT obj/`basename $${i%.*}`.o; done > $@
+all:$(BINFILE)
+    
+$(ODIR)/%.o : $(SDIR)/%.cpp $(DEPS)
+	$(CXX) $(CFLAGS) -c $< -o $@ 
 
-                                        
-$(BINFILE): $(OFILES)
-    $(E)Linking $@
-    $(Q)$(CXX) -o $@ $(OFILES) $(LDFLAGS)
+$(BINFILE): $(OBJ) 
+	$(CXX) -o $@ $^ $(CFLAGS) $(LIBS)
+
+.PHONY: clean all
+
 clean:
-    $(E)Removing files
-    $(Q)rm -f $(BINFILE) obj/* Makefile.dep
+	rm -f $(ODIR)/*.o *~ $(BINFILE) 
