@@ -1,4 +1,5 @@
 *.bak
 *.o
-analyze
+analyzer
 *result
+testbench

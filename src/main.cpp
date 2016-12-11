@@ -1,62 +1,59 @@
 #include <stdio.h>
+#include <cctype>
+#include <cmath>
 
 #include <string>
 #include <iomanip>
-#include <cctype>
-#include <sstream>
 #include <iostream>
-#include <fstream>
 #include <vector>
 
 #include "../include/task.h"
+#include "../include/file_handler.h"
+#include "../include/analysis.h"
 
 using namespace std;
 
 
 int main(int argc, char** argv){
-    if (argc != 2) {
-        cout<<"[usage]: ./analyse <file in>"<<endl;
+    if (argc >3 || argc < 2) {
+        cout<<"[usage]: ./analyse <file in> [p]"<<endl;
+        return 0;
     }
-    unsigned int numTasks = 0;
-    ifstream ifs;
-    ifs.open(argv[1],ifstream::in);
+
+    bool flagP = (argc ==3);
     
-    string line;
-    char ch;
+    vector <task> TaskSet;
+    vector<task>::iterator it;
 
-    unsigned int ID;
-    float C, T, D, B;
-    vector <task> task_set;
+    file_read(argv[1], TaskSet, flagP);
 
-
-    ch = ifs.peek();
-    while (ch != EOF){
-        getline (ifs, line);
-        cout<<line<<endl;
-        stringstream input(line);
-        if (isdigit(ch)){
-          input>>ID>>C>>T;
-          if (input.peek()== EOF){
-            task_set.push_back(task(ID,C,T));
-          }
-          else{ 
-            input >>D;
-            if (input.peek()== EOF){
-             task_set.push_back(task(ID,C,T,D));
-            }
-            else{
-                input >>B;
-                task_set.push_back(task(ID,C,T,D,B));
-            }    
-          } 
-        }
-
-        ch = ifs.peek();
-    }
+    prioritize(TaskSet, flagP);
+    
 
     cout<<"The task set is :"<<endl;
-    for (vector<task>::iterator it = task_set.begin(); it != task_set.end(); ++it){
-        cout<<setw(5)<<it->getID()<<setw(5)<<it->getC()<<setw(5)<<it->getT()<<setw(5)<<it->getD()<<setw(5)<<it->getB()<<endl;
+        cout<<setw(6)<<"Prio"<<setw(6)<<"ID"<<setw(6)<<"Exec"<<setw(6)<<"Priod"<<setw(6)<<"Dline"<<setw(6)<<"Blk"<<endl;
+    for (it = TaskSet.begin(); it != TaskSet.end(); ++it){
+        cout<<setw(6)<<it->getP()<<setw(6)<<it->getID()<<setw(6)<<it->getC()<<setw(6)<<it->getT()<<setw(6)<<it->getD()<<setw(6)<<it->getB()<<endl;
+    }
+
+    float effectU,actualU,UB;
+    
+    unsigned int size = TaskSet.size();
+    UB = size * (pow(2.0, 1.0/size) -1.0);
+    int unSchedTasks = analysis(TaskSet, effectU, actualU);
+
+    cout<<endl<<endl;
+    cout<<"The Utilization Bound     of"<<setw(4)<<size<<" task(s)  is "<<UB<<endl;
+    cout<<"The Effective Utilization of the task set is "<<effectU<<endl;
+    cout<<"The Actual    Utilization of the task set is "<<actualU<<endl;
+
+    cout<<endl<<"There are "<<setw(5)<<unSchedTasks<<" task(s) unschedulable"<<endl;
+    
+        cout<<setw(6)<<"Prio"<<setw(6)<<"ID"<<setw(6)<<"Exec"<<setw(6)<<"Priod"<<setw(6)<<"Dline"<<setw(6)<<"Blk"<<setw(6)<<"R"<<endl;
+    for (it = TaskSet.begin(); it != TaskSet.end(); ++it){
+        cout<<setw(6)<<it->getP()<<setw(6)<<it->getID()<<setw(6)<<it->getC()<<setw(6)<<it->getT()<<setw(6)<<it->getD()<<setw(6)<<it->getB()<<setw(6)<<it->getR();
+        if (it->IsSchedulable() == 0) cout<<"  !!Unschedulable!!";
+        cout<<endl;
     }
 
 return 0;

@@ -12,12 +12,12 @@ ifdef DEBUG
     COMMONFLAGS := $(COMMONFLAGS) -g
 endif
 
-BINFILE = analyse
+BINFILE = analyser
 
-_DEPS = task.h
+_DEPS = task.h file_handler.h analysis.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = task.o main.o
+_OBJ = task.o file_handler.o analysis.o main.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 all:$(BINFILE)

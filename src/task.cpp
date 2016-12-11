@@ -5,7 +5,8 @@
 using namespace std;
 
 
-task::task(int ID, float C, float T){
+task::task(unsigned int ID, float C, float T){
+    this->P  =  1;
     this->ID =  ID;
     this->C  = C;
     this->T  = T;
@@ -16,7 +17,8 @@ task::task(int ID, float C, float T){
 
 }
 
-task::task(int ID, float C, float T, float D){
+task::task(unsigned int ID, float C, float T, float D){
+    this->P  =  1;
     this->ID =  ID;
     this->C  = C;
     this->T  = T;
@@ -27,7 +29,44 @@ task::task(int ID, float C, float T, float D){
     assert(D<= T);
 }
 
-task::task(int ID, float C, float T, float D, float B){
+task::task(unsigned int ID, float C, float T, float D, float B){
+    this->P  =  1;
+    this->ID =  ID;
+    this->C  = C;
+    this->T  = T;
+    this->D  = D;
+    this->B  = B;
+    this->R  = this->T +1;
+    assert(C<= D);
+    assert(D<= T);
+}
+
+task::task(unsigned int P,unsigned int ID, float C, float T){
+    this->P  =  P;
+    this->ID =  ID;
+    this->C  = C;
+    this->T  = T;
+    this->D  = this->T;
+    this->B  = 0;
+    this->R  = this->T +1;
+    assert(C<= D);
+
+}
+
+task::task(unsigned int P,unsigned int ID, float C, float T, float D){
+    this->P  =  P;
+    this->ID =  ID;
+    this->C  = C;
+    this->T  = T;
+    this->D  = D;
+    this->B  = 0;
+    this->R  = this->T +1;
+    assert(C<= D);
+    assert(D<= T);
+}
+
+task::task(unsigned int P,unsigned int ID, float C, float T, float D, float B){
+    this->P  =  P;
     this->ID =  ID;
     this->C  = C;
     this->T  = T;
@@ -50,10 +89,17 @@ task::task(int ID, float C, float T, float D, float B){
 //void task::setD(float in){
 //    this->D = in;
 //}
-//void task::setR(float in){
-//    this->R = in;
-//}
 
+void task::setP(unsigned int in){
+    this->P = in;
+}
+void task::setR(float in){
+    this->R = in;
+}
+
+unsigned int task::getP(){
+        return this->P;
+}
 unsigned int task::getID(){
         return this->ID;
 }
@@ -72,6 +118,8 @@ float task::getB(){
 float task::getR(){
     return this->R;
 }
+
+
 bool task::IsSchedulable(){
     return this->R <= this->D;
 }
