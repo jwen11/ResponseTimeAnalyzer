@@ -161,11 +161,23 @@ int message_read ( char* filename, vector<vector<task> >& TaskSet, vector<vector
             else 
                 T = to->getT();    
         }
+//Create the messages and put in two vectors        
         outMSGSet[from->getCPU()].push_back( message(ID,from, to, T, Size, Pout));
         inMSGSet[to->getCPU()].push_back(    message(ID,from, to, T, Size, Pin));
         }
         ch = ifs.peek();
     }
+
+//Update the incomingMessages for each task
+    for (int i=0; i < inMSGSet.size(); ++i){
+        for (int j =0; j <inMSGSet[i].size(); ++j){
+            inMSGSet[i][j].getTo()->incomingMessages.push_back(&(inMSGSet[i][j]));
+        }
+    }
+
+
+
+    
     ifs.close();
     return 0;
 }

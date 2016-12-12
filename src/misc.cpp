@@ -13,13 +13,17 @@ using namespace std;
 
 void display(vector<vector< task> >& in){
     cout<<"The task set is in "<<in.size()<<" cores:"<<endl;
-        cout<<setw(6)<<"CPU"<<setw(6)<<"Prio"<<setw(6)<<"ID"<<setw(6)<<"Exec"<<setw(6)<<"Priod"<<setw(6)<<"Dline"<<endl;
+        cout<<setw(6)<<"CPU"<<setw(6)<<"Prio"<<setw(6)<<"ID"<<setw(6)<<"Exec"<<setw(6)<<"Priod"<<setw(6)<<"Dline"<<setw(6)<<"InMSG"<<endl;
 
     for (int i =0; i < in.size(); ++i){
 
         cout<<i<<endl;
         for (vector<task>::iterator it = in[i].begin(); it != in[i].end(); ++it){
-            cout<<setw(6)<<(*it).getCPU()<<setw(6)<<(*it).getP()<<setw(6)<<(*it).getID()<<setw(6)<<(*it).getC()<<setw(6)<<(*it).getT()<<setw(6)<<(*it).getD()<<endl;
+            cout<<setw(6)<<(*it).getCPU()<<setw(6)<<(*it).getP()<<setw(6)<<(*it).getID()<<setw(6)<<(*it).getC()<<setw(6)<<(*it).getT()<<setw(6)<<(*it).getD();
+            for(int j =0; j < (*it).incomingMessages.size(); ++j ){
+                cout<<setw(6)<<(*it).incomingMessages[j]->getFrom()->getID();
+            }
+            cout<<endl;
         }
     }
     cout<<endl;
