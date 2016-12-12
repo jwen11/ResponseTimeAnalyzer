@@ -57,11 +57,10 @@ int main(int argc, char** argv){
      
 #endif    
 
-//    float effectU,actualU,UB;
+    vector<float> effU;
+    vector<float> actU;
 //    
-//    unsigned int size = TaskSet.size();
-//    UB = size * (pow(2.0, 1.0/size) -1.0);
-//    int unSchedTasks = analysis(TaskSet, effectU, actualU);
+    int unSchedTasks = analysis(   TaskSet,   inMSGSet,  outMSGSet,  configure,  effU,  actU );
 //
 //    cout<<endl<<endl;
 //    cout<<"The Utilization Bound     of"<<setw(4)<<size<<" task(s)  is "<<UB<<endl;
@@ -77,6 +76,22 @@ int main(int argc, char** argv){
 //        cout<<endl;
 //    }
 //
+
+#if VERBOSE
+    cout<<endl<<endl<<"Task set is :"<<endl;
+    display(TaskSet);
+    
+    cout<<endl<<endl<<"inMSGSet set is :"<<endl;
+    display(inMSGSet); 
+    
+    cout<<endl<<endl<<"outMSGSet set is :"<<endl;
+    display(outMSGSet);
+    
+    cout<<endl<<endl<<"Server Config set is :"<<endl;
+    display(configure);
+     
+#endif    
+
 return 0;
 
 }

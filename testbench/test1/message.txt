@@ -1,0 +1,8 @@
+%Meesgaes
+%ID From To Size [Period] [Priority_IN] [Priority_OUT] 
+1   5   2   300
+2   2   4   80
+3   2   3   128
+4   4   7   128
+5   2   1   256
+6   9   2   8

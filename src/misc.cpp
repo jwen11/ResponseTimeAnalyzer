@@ -34,7 +34,11 @@ void display(vector<vector< message> >& in){
         cout<<setw(6)<<"Prio"<<setw(6)<<"ID"<<setw(6)<<"From"<<setw(6)<<"To"<<setw(6)<<"Priod"<<setw(6)<<"Size"<<endl;
     for (int i =0; i < in.size(); ++i){
         for (vector<message>::iterator it = in[i].begin(); it != in[i].end(); ++it){
-            cout<<setw(6)<<(*it).getP()<<setw(6)<<(*it).getID()<<setw(6)<<(*it).getFrom()->getID()<<setw(6)<<(*it).getTo()->getID()<<setw(6)<<(*it).getT()<<setw(6)<<(*it).getSize()<<endl;
+            cout<<setw(6)<<(*it).getP()<<setw(6)<<(*it).getID()<<setw(6)<<(*it).getFrom()->getID()<<setw(6)<<(*it).getTo()->getID()<<setw(6)<<(*it).getT()<<setw(6)<<(*it).getSize();
+            for(int j =0; j < (*it).J.size(); ++j ){
+                cout<<setw(6)<<(*it).J[j];
+            }
+            cout<<endl;
         }
     }
     cout<<endl;

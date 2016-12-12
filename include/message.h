@@ -16,8 +16,8 @@ class message{
     unsigned int Size; 
     task* from;
     task* to;    
-    vector<unsigned int> J;
 public:
+    vector<unsigned int> J;
     bool JFixed;
     
     message (unsigned int ID,task* from ,task* to, unsigned int T, unsigned int Size,unsigned int P);
