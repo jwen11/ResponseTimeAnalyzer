@@ -1,100 +1,67 @@
 #include<stdio.h>
 #include<cassert>
+#include<iostream>
 
 #include"../include/task.h"
 using namespace std;
 
 
-task::task(unsigned int ID, float C, float T){
-    this->P  =  1;
+task::task(unsigned CPU, unsigned int ID, unsigned int C, unsigned int T){
+    this->JFixed = false;
+    this->RFixed = false;
+    this->CPU  =  CPU;
+    this->P  =  0;
     this->ID =  ID;
     this->C  = C;
     this->T  = T;
     this->D  = this->T;
-    this->B  = 0;
-    this->R  = this->T +1;
+    cout<<CPU<<" "<<ID<<" "<<C<<" "<<T<<endl;
     assert(C<= D);
 
 }
 
-task::task(unsigned int ID, float C, float T, float D){
-    this->P  =  1;
+task::task(unsigned CPU, unsigned int ID, unsigned int C, unsigned int T, unsigned int D){
+    this->JFixed = false;
+    this->RFixed = false;
+    this->CPU  =  CPU;
+    this->P  =  0;
     this->ID =  ID;
     this->C  = C;
     this->T  = T;
     this->D  = D;
-    this->B  = 0;
-    this->R  = this->T +1;
+    cout<<CPU<<" "<<ID<<" "<<C<<" "<<T<<endl;
     assert(C<= D);
     assert(D<= T);
 }
 
-task::task(unsigned int ID, float C, float T, float D, float B){
-    this->P  =  1;
-    this->ID =  ID;
-    this->C  = C;
-    this->T  = T;
-    this->D  = D;
-    this->B  = B;
-    this->R  = this->T +1;
-    assert(C<= D);
-    assert(D<= T);
-}
 
-task::task(unsigned int P,unsigned int ID, float C, float T){
-    this->P  =  P;
-    this->ID =  ID;
-    this->C  = C;
-    this->T  = T;
-    this->D  = this->T;
-    this->B  = 0;
-    this->R  = this->T +1;
-    assert(C<= D);
 
-}
-
-task::task(unsigned int P,unsigned int ID, float C, float T, float D){
+task::task(unsigned CPU, unsigned int ID, unsigned int C, unsigned int T, unsigned int D, unsigned int P){
+    this->JFixed = false;
+    this->RFixed = false;
+    this->CPU  =  CPU;
     this->P  =  P;
     this->ID =  ID;
     this->C  = C;
     this->T  = T;
     this->D  = D;
-    this->B  = 0;
-    this->R  = this->T +1;
+    cout<<CPU<<" "<<ID<<" "<<C<<" "<<T<<endl;
     assert(C<= D);
     assert(D<= T);
 }
 
-task::task(unsigned int P,unsigned int ID, float C, float T, float D, float B){
-    this->P  =  P;
-    this->ID =  ID;
-    this->C  = C;
-    this->T  = T;
-    this->D  = D;
-    this->B  = B;
-    this->R  = this->T +1;
-    assert(C<= D);
-    assert(D<= T);
-}
 
-//void task::setC(float in){
-//    this->C = in;
-//}
-//void task::setT(float in){
-//    this->T = in;
-//}
-//void task::setB(float in){
-//    this->B = in;
-//}
-//void task::setD(float in){
-//    this->D = in;
-//}
 
 void task::setP(unsigned int in){
     this->P = in;
 }
-void task::setR(float in){
-    this->R = in;
+
+void task::setR(unsigned int in){
+    this->R.push_back( in);
+}
+
+void task::setJ(unsigned int in){
+    this->J.push_back( in);
 }
 
 unsigned int task::getP(){
@@ -103,24 +70,30 @@ unsigned int task::getP(){
 unsigned int task::getID(){
         return this->ID;
 }
-float task::getC(){
+unsigned int task::getCPU(){
+    return this->CPU;
+}
+unsigned int task::getC(){
     return this->C;
 }
-float task::getT(){
+unsigned int task::getT(){
     return this->T;
 }
-float task::getD(){
+unsigned int task::getD(){
     return this->D;
 }
-float task::getB(){
-    return this->B;
+unsigned int task::getR(){
+    return *(this->R.rbegin());
 }
-float task::getR(){
-    return this->R;
+unsigned int task::getJ(){
+    return *(this->J.rbegin());
 }
 
 
 bool task::IsSchedulable(){
-    return this->R <= this->D;
+    if (JFixed & RFixed)
+        return ((this->getR()+this->getJ()) <= this->D );
+    else 
+        return false;
 }
 

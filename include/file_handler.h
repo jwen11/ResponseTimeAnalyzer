@@ -2,10 +2,14 @@
 #define _FILE_HANDLER_H
 
 #include <vector>
-using namespace std
-;
+using namespace std;
+
 class task;
+class message;
+class server_conf;
 
-int file_read ( char* filename, vector<task>& TaskSet, bool flagP);
+int task_read ( char* filename, vector<vector<task> > & TaskSet);
+int message_read ( char* filename, vector<vector<task> >& TaskSet, vector<vector<message> >& inMSGSet, vector<vector<message> >& outMSGSet);
 
+int configure_read(char* filename, server_conf& configure);
 #endif

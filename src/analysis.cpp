@@ -12,19 +12,33 @@ bool taskCompare( const task& lhs, const task& rhs){
     else return false;
 }
 
-int prioritize(  vector<task>& TaskSet, bool flagP){
-    sort(TaskSet.begin(),TaskSet.end(), taskCompare);
+bool messageCompare( const message& lhs, const message& rhs){
+    if (lhs.P < rhs.P ) return true;
+    else if (lhs.P == rhs.P &&lhs.T < rhs.T ) return true;
+    else return false;
+}
+
+int prioritize(  vector<task>& taskSet){
+    sort(taskSet.begin(),taskSet.end(), taskCompare);
     unsigned int P =1;
-    if (~flagP){
-        for (vector<task>::iterator it = TaskSet.begin() ; it != TaskSet.end(); ++it){
+        for (vector<task>::iterator it = taskSet.begin() ; it != taskSet.end(); ++it){
             it->setP(P); 
             ++P;
         }
-    }
 
 }
 
-int analysis(  vector<task>& TaskSet, float& effU, float& actU ){
+int prioritize(  vector<message>& messageSet){
+    sort(messageSet.begin(),messageSet.end(), messageCompare);
+    unsigned int P =1;
+        for (vector<message>::iterator it = messageSet.begin() ; it != messageSet.end(); ++it){
+            it->setP(P); 
+            ++P;
+        }
+
+}
+
+int analysis(  vector<task>& taskSet, float& effU, float& actU ){
         
     float tempR = 0, prevR =0;
     int ret =0;
@@ -34,17 +48,17 @@ int analysis(  vector<task>& TaskSet, float& effU, float& actU ){
 
     effU =actU =0;
 
-   for ( it = TaskSet.begin() ; it != TaskSet.end(); ++it){
-           tempR = it->getC() + it->getB();
-       for ( j = TaskSet.begin() ; j != it; ++j){
+   for ( it = taskSet.begin() ; it != taskSet.end(); ++it){
+           tempR = it->getC() ;
+       for ( j = taskSet.begin() ; j != it; ++j){
            tempR += j->getC();
        }
        
        while (tempR <= it->getD()){
            prevR = tempR;
-           tempR = it->getC()+  it->getB();
+           tempR = it->getC();
            
-           for (j = TaskSet.begin() ; j != it; ++j){
+           for (j = taskSet.begin() ; j != it; ++j){
                times = prevR / j->getT() ;
                ceiling = ( prevR - times* j->getT() ) ? times +1 : times;
 
@@ -57,7 +71,7 @@ int analysis(  vector<task>& TaskSet, float& effU, float& actU ){
        }// it unschedulable
 
         it->setR(tempR);     
-        effU +=  (it->getC()+ it->getT() - it->getD() + it->getB() )/it->getT() ;
+        effU +=  (it->getC()+ it->getT() - it->getD()  )/it->getT() ;
         actU +=  (it->getC() )/it->getT() ;
         if (tempR > it->getD()) ++ret;
     }

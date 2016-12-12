@@ -1,5 +1,6 @@
 *.bak
 *.o
-analyzer
+./analyzer
 *result
 testbench
+tags

@@ -5,9 +5,12 @@
 
 using namespace std;
 class task;
+class message;
 
 bool taskCompare( const task& lhs, const task& rhs);
-int prioritize(  vector<task>& TaskSet, bool flagP);
-int analysis(  vector<task>& TaskSet, float& effU, float& actU );
+bool messageCompare( const message& lhs, const message& rhs);
+int prioritize(  vector<task>& taskSet );
+int prioritize(  vector<message>& messageSet );
+int analysis(  vector<task>& taskSet, float& effU, float& actU );
 
 #endif
