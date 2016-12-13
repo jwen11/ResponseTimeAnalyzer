@@ -19,16 +19,17 @@ class task{
     unsigned int T; //period
     unsigned int D; //deadline
 
-    vector <unsigned int> J; //Releas Jitter time
-    vector <unsigned int> R; //Response analysis
             
 //    void setC (unsigned in);
 //    void setT (unsigned in);
 //    void setD (unsigned in);
 public:
+    vector <unsigned int> J; //Releas Jitter time
+    vector <unsigned int> R; //Response analysis
     bool JFixed;
     bool RFixed;
-    vector<message*> incomingMessages;
+    vector<message*> incomingMessageSend;
+    vector<message*> incomingMessageReceive;
 
     task (unsigned int CPU,unsigned int ID,unsigned int C, unsigned int T);
     task (unsigned int CPU,unsigned int ID,unsigned int C, unsigned int T, unsigned D);

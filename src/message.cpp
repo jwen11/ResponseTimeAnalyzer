@@ -45,6 +45,7 @@ task* message::getTo(){
 }
 
 unsigned int message::getJ(){
+    if (this->J.size() ==0 ) return 0;
     return *(this->J.rbegin());
 }
 

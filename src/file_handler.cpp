@@ -1,4 +1,5 @@
 
+#include<algorithm>
 #include <string>
 #include <iomanip>
 #include <cctype>
@@ -23,7 +24,7 @@
 2     4   5   14
 */
 
-int task_read ( char* filename, vector<vector<task> >& TaskSet){
+int task_read ( char* filename, vector<vector<task> >& TaskSet, server_conf& conf){
     
     ifstream ifs;
     ifs.open(filename,ifstream::in);
@@ -52,10 +53,12 @@ int task_read ( char* filename, vector<vector<task> >& TaskSet){
     }
 
 
-//Init empty tasksets in each activated CPU
+//Init empty tasksets with only a server in each activated CPU
     vector<task> empty_list;
+
     for (int i =0; i < numCPUs; ++i){
         TaskSet.push_back(empty_list);
+        TaskSet[i].push_back(task(i,0,conf.slot[i],conf.T));
     }
 
 //Get the tasks
@@ -68,6 +71,7 @@ int task_read ( char* filename, vector<vector<task> >& TaskSet){
           input>>CPU;
           input>>ID >>C >>T;
           format =0;
+          D= P =0;
           if (input.peek()!= EOF){
              input >>D;
              if (D)
@@ -88,9 +92,15 @@ int task_read ( char* filename, vector<vector<task> >& TaskSet){
         ch = ifs.peek();
     }
     ifs.close();
-    for (int i =0; i < TaskSet.size(); ++i)
+    for (int i =0; i < TaskSet.size(); ++i){
+        prioritize(TaskSet[i]);
+#if DBG        
         cout<<TaskSet[i].size()<<" ";
+#endif        
+    }
+#if DBG        
     cout<<endl;
+#endif        
     return 0;
 }
 
@@ -115,7 +125,9 @@ int message_read ( char* filename, vector<vector<task> >& TaskSet, vector<vector
     bool getFrom, getTo;
 //Get how many activated cores
     numCPUs = TaskSet.size();
+#ifdef DBG
     cout<<numCPUs<<endl;
+#endif        
 //Init empty tasksets in each activated CPU
     vector<message> empty_list;
     for (int i =0; i < numCPUs; ++i){
@@ -127,7 +139,6 @@ int message_read ( char* filename, vector<vector<task> >& TaskSet, vector<vector
     while (ch != EOF){
         getline (ifs, line);
         stringstream input(line);
-        cout<<line<<endl;
         if (isdigit(ch)){
           input>>ID>>From>>To>>Size;
         T = Pin = Pout = 0;
@@ -167,11 +178,21 @@ int message_read ( char* filename, vector<vector<task> >& TaskSet, vector<vector
         }
         ch = ifs.peek();
     }
+    for (int i = 0; i < inMSGSet[i].size(); ++i){
+        prioritize(inMSGSet[i]);
+        prioritize(outMSGSet[i]);
+    }
+
 
 //Update the incomingMessages for each task
     for (int i=0; i < inMSGSet.size(); ++i){
         for (int j =0; j <inMSGSet[i].size(); ++j){
-            inMSGSet[i][j].getTo()->incomingMessages.push_back(&(inMSGSet[i][j]));
+            inMSGSet[i][j].getTo()->incomingMessageReceive.push_back(&(inMSGSet[i][j]));
+        }
+    }
+    for (int i=0; i < outMSGSet.size(); ++i){
+        for (int j =0; j <outMSGSet[i].size(); ++j){
+            outMSGSet[i][j].getTo()->incomingMessageSend.push_back(&(outMSGSet[i][j]));
         }
     }
 
@@ -184,7 +205,7 @@ int message_read ( char* filename, vector<vector<task> >& TaskSet, vector<vector
 
 /*
 %%%%%ConfigFile format:
-%Number of CPUs
+%Number of slots
 2
 %TDMA Period
 10
@@ -200,16 +221,16 @@ int configure_read ( char* filename, server_conf& conf){
     string line;
     char ch;
 
-    unsigned numCPUs;
+    unsigned numslots;
     unsigned T, in, out, slot;
 
-//Get how many activated cores
+//Get how many slots
     ch = ifs.peek();
     while (ch != EOF){
         getline (ifs, line);
         stringstream input(line);
         if (isdigit(ch)){
-            input>>numCPUs;
+            input>>numslots;
             break;
         }
 
@@ -237,7 +258,6 @@ int configure_read ( char* filename, server_conf& conf){
     while (ch != EOF){
         getline (ifs, line);
         stringstream input(line);
-        cout<<line<<endl;
         if (isdigit(ch)){
           input>>in>>out>>slot;
           conf.size_in.push_back(in);
@@ -246,6 +266,38 @@ int configure_read ( char* filename, server_conf& conf){
         }
         ch = ifs.peek();
     }
-    assert (conf.slot.size() == numCPUs);
+    assert (conf.slot.size() == numslots);
     return 0;
+}
+
+bool taskCompare( const task& lhs, const task& rhs){
+    if (lhs.P < rhs.P ) return true;
+    else if (lhs.P == rhs.P &&lhs.T < rhs.T ) return true;
+    else return false;
+}
+
+bool messageCompare( const message& lhs, const message& rhs){
+    if (lhs.P < rhs.P ) return true;
+    else if (lhs.P == rhs.P &&lhs.T < rhs.T ) return true;
+    else return false;
+}
+
+int prioritize(  vector<task>& taskSet){
+    sort(taskSet.begin(),taskSet.end(), taskCompare);
+    unsigned int P =1;
+        for (vector<task>::iterator it = taskSet.begin() ; it != taskSet.end(); ++it){
+            it->setP(P); 
+            ++P;
+        }
+
+}
+
+int prioritize(  vector<message>& messageSet){
+    sort(messageSet.begin(),messageSet.end(), messageCompare);
+    unsigned int P =1;
+        for (vector<message>::iterator it = messageSet.begin() ; it != messageSet.end(); ++it){
+            it->setP(P); 
+            ++P;
+        }
+
 }

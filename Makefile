@@ -1,7 +1,7 @@
 IDIR =./include
 CC=gcc
 CXX=g++
-FLAGS= COMMONFLAGS = -Wall -Wextra -pedantic
+FLAGS= COMMONFLAGS = -Wall -Wextra -pedantic -std=c++11
 
 ODIR=./obj
 LDIR=./lib
@@ -18,7 +18,7 @@ endif
 
 BINFILE = analyser
 
-_DEPS = task.h file_handler.h analysis.h message.h config.h misc.h
+_DEPS = task.h file_handler.h analysis.h message.h config.h misc.h define.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = task.o file_handler.o analysis.o main.o message.o misc.o

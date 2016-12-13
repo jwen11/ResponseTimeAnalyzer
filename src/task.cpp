@@ -83,9 +83,11 @@ unsigned int task::getD(){
     return this->D;
 }
 unsigned int task::getR(){
+    if (this->R.size() ==0 ) return 0;
     return *(this->R.rbegin());
 }
 unsigned int task::getJ(){
+    if (this->J.size() ==0 ) return 0;
     return *(this->J.rbegin());
 }
 

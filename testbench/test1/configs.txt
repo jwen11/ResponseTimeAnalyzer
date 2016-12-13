@@ -1,7 +1,7 @@
 %Number of Slots
 3
 %TDMA Period
-10
+20
 %size_in    size_out   slot   
 2048   2048  1
 2048   2048  1
